@@ -77,7 +77,7 @@ class TestBasic : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestBasic()
+    void TestBasicX()
     {
 
       //Parameters::init();

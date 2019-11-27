@@ -67,6 +67,8 @@
 #include "CellPolarityXWriter.hpp"
 #include "CellPolarityYWriter.hpp"
 
+#include "CellKillerSmallCellLumen.hpp"
+
 //#include "MyCycle.hpp"
 
 #include "CellTypeWriter.hpp"
@@ -77,7 +79,7 @@ class TestSmallCellLumen : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestSmallCellLumen()
+    void TestSmallCellLumenX()
     {
 
       //Parameters::init();
@@ -86,7 +88,7 @@ public:
 
 
 
-      HoneycombVertexMeshGenerator generator(8, 3);
+      HoneycombVertexMeshGenerator generator(4, 3);
       MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
 
       std::vector<CellPtr> cells;
@@ -149,8 +151,14 @@ public:
       MAKE_PTR(CellEndo, p_endo);
 
 
-      //CycleEpiDirection* p_cell_cycle_model = new CycleEpiDirection();
 
+
+      MAKE_PTR_ARGS(CellKillerSmallCellLumen, p_killer, (&cell_population));
+
+      //simulator.AddCellKiller(p_killer);
+
+      //CycleEpiDirection* p_cell_cycle_model = new CycleEpiDirection();
+      Parameters::getNextIndex();
 
       int counter = 0;
 
@@ -161,19 +169,23 @@ public:
 
         //On definit le cycle
         //cell_iter->SetCellCycleModel();
+        //cell_iter->GetCellData()->SetItem("target area", 10);
 
 
-        if(counter < 8){
+        cell_iter->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
+        cell_iter->GetCellData()->SetItem("timeFromLastLumenGeneration",0);
+        cell_iter->GetCellData()->SetItem("vecPolaX",0);
+        cell_iter->GetCellData()->SetItem("vecPolaY",0);
+
+        if(counter ==2 || counter ==1){
           cell_iter->AddCellProperty(p_endo);
         }
         else{
-
-
-          cell_iter->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
-          cell_iter->GetCellData()->SetItem("timeFromLastLumenGeneration",0);
-          cell_iter->GetCellData()->SetItem("vecPolaX",0);
-          cell_iter->GetCellData()->SetItem("vecPolaY",0);
           cell_iter->AddCellProperty(p_epiDir);
+
+
+
+
         }
         counter++;
 

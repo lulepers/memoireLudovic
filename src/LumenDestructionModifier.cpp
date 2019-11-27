@@ -142,7 +142,13 @@ void LumenDestructionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DI
       //Tuer la lumière
       if(notStable == 1)
       {
+
+        if(pCell->GetCellData()->GetItem("mustDie") == 0)
+        {
+          pCell->GetCellData()->SetItem("timeOfStartDying", SimulationTime::Instance()->GetTime());
+        }
         pCell->GetCellData()->SetItem("mustDie", 1);
+
 
       }
       else{

@@ -4,6 +4,7 @@
 #include "NodeBasedCellPopulation.hpp"
 #include <stdlib.h>
 #include <math.h>
+//#include "ApoptoticCellProperty.hpp"
 #include "CellEndo.hpp"
 #include "CellLumen.hpp"
 #include "Parameters.hpp"
@@ -84,23 +85,27 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
         }
         else
         {
-          pCell->StartApoptosis(2);
-          std::cout << pCell->GetCellData()->GetItem("mustDie") << std::endl;
+          //MAKE_PTR(ApoptoticCellProperty, p_apo_prop);
+          //pCell->AddCellProperty(p_apo_prop);
           //pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_DIYNG_SIZE);//parfois cela crash avec assert(area !=0)
 
           //VertexElement<DIM, DIM>* p_element = p_cell_population->GetElementCorrespondingToCell(*cell_iter);
           //unsigned p_index = p_element->GetIndex();
           //double cell_perimeter = p_cell_population->rGetMesh().GetElongationShapeFactorOfElement(p_index);
           //double cote = cell_perimeter / 4;
-          //double area = cote * cote;
+          pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_DIYNG_SIZE);
+          //double area = rCellPopulation.GetVolumeOfCell(pCell);
 
-          //if(area < Parameters::SIZE_MIN_FOR_KILL)
-          //{
-          //  pCell->Kill();
-          //}
+          //std::cout << SimulationTime::Instance()->GetTime() << "  < " << pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL << std::endl;
+
+          //if(area < Parameters::SIZE_MIN_FOR_KILL && SimulationTime::Instance()->GetTime() > pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL)
+          if(SimulationTime::Instance()->GetTime() > pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL)
+          {
+            pCell->Kill();
+          }
         }
 
-        std::cout << pCell->GetCellData()->GetItem("mustDie") << std::endl;
+
     }
 
 

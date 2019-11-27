@@ -1,10 +1,10 @@
 #include "Parameters.hpp"
 
 
-int Parameters::index_cell_epi = 0;
+int Parameters::index_cell = 0;
 
 int Parameters::getNextIndex(){
-  index_cell_epi = index_cell_epi + 1;
+  index_cell = index_cell + 1;
 
-  return index_cell_epi;
+  return index_cell;
 }
