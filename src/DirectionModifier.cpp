@@ -163,7 +163,7 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
                   double dx = cell_location[0] - neighbour_location[0];
                   double dy = cell_location[1] - neighbour_location[1];
 
-                  double normalisation = dx + dy;
+                  double normalisation = sqrt(dx*dx + dy*dy);
 
                   vecPolaX = vecPolaX + dx / normalisation * Parameters::IMPACT_POLARISATION_ENDO_ON_EPI * Parameters::TIMESTEP;
                   vecPolaY = vecPolaY + dy / normalisation * Parameters::IMPACT_POLARISATION_ENDO_ON_EPI * Parameters::TIMESTEP;
@@ -173,7 +173,7 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
                 }
 
 
-                if(neighbour_is_lumen == 1){
+                if(neighbour_is_lumen == 1 && p_neighbour_cell->GetCellData()->GetItem("mustDie")==0){
 
                   c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
                   c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
@@ -181,7 +181,7 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
                   double dx = cell_location[0] - neighbour_location[0];
                   double dy = cell_location[1] - neighbour_location[1];
 
-                  double normalisation = dx + dy;
+                  double normalisation = sqrt(dx*dx + dy*dy);
 
                   vecPolaX = vecPolaX + dx / normalisation * Parameters::IMPACT_POLARISATION_LUMEN_ON_EPI * Parameters::TIMESTEP;
                   vecPolaY = vecPolaY + dy / normalisation * Parameters::IMPACT_POLARISATION_LUMEN_ON_EPI * Parameters::TIMESTEP;

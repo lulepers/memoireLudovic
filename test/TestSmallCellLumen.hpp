@@ -1,5 +1,5 @@
-#ifndef TESTBASIC_HPP_
-#define TESTBASIC_HPP_
+#ifndef TESTSMALLCELLLUMEN_HPP_
+#define TESTSMALLCELLLUMEN_HPP_
 
 #include <cxxtest/TestSuite.h>
 #include "CheckpointArchiveTypes.hpp"
@@ -73,11 +73,11 @@
 
 #include "Parameters.hpp"
 
-class TestBasic : public AbstractCellBasedTestSuite
+class TestSmallCellLumen : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestBasic()
+    void TestSmallCellLumen()
     {
 
       //Parameters::init();
@@ -106,7 +106,7 @@ public:
 
       OffLatticeSimulation<2> simulator(cell_population);
 
-      simulator.SetOutputDirectory("Testbasique");
+      simulator.SetOutputDirectory("TestSmallCellLumen");
       simulator.SetSamplingTimestepMultiple(Parameters::SAMPLING_TIMESTEP);
       simulator.SetDt(Parameters::TIMESTEP);
       //en heure, 24/48

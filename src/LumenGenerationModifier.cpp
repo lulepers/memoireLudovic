@@ -92,8 +92,8 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
         //Si le vecteur est en dessous du trheshold on le mets à 0
         pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
       }
-      //Si la cellule viens de se diviser
-      if(pCell->GetAge()<Parameters::AGE_DIV_MIN)
+      //Si la cellule viens de se diviser et la simulation a durée assez longtemps
+      if(pCell->GetAge()<Parameters::AGE_DIV_MIN && SimulationTime::Instance()->GetTime() > 2 * Parameters::AGE_DIV_MIN)
       {
 
 
@@ -116,8 +116,9 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
 
               if ( neighbour_is_epiDir == 1)
               {
-                if(pCell->GetAge()==p_neighbour_cell->GetAge())
+                if(pCell->GetCellData()->GetItem("cellIndex")==p_neighbour_cell->GetCellData()->GetItem("cellIndex"))
                 {
+
 
                   //on regarde si elle est pointée par le vecteur
 
@@ -142,7 +143,30 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
                     p_neighbour_cell->RemoveCellProperty<CellEpiDirection>();
                     MAKE_PTR(CellLumen, p_lumen);
                     p_neighbour_cell->AddCellProperty(p_lumen);
+                    p_neighbour_cell->GetCellData()->SetItem("mustDie", 0);
                   }
+
+                  else{
+                    pCell->RemoveCellProperty<CellEpiDirection>();
+                    MAKE_PTR(CellLumen, p_lumen);
+                    pCell->AddCellProperty(p_lumen);
+                    pCell->GetCellData()->SetItem("mustDie", 0);
+                  }
+
+                  pCell->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
+
+                  pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
+                  pCell->GetCellData()->SetItem("vecPolaX", 0);
+                  pCell->GetCellData()->SetItem("vecPolaY", 0);
+
+                  p_neighbour_cell->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
+
+                  p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
+                  p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
+                  p_neighbour_cell->GetCellData()->SetItem("vecPolaY", 0);
+
+
+
                 }
 
               }
@@ -152,11 +176,6 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
             }
 
           }
-
-        pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
-        pCell->GetCellData()->SetItem("vecPolaX", 0);
-        pCell->GetCellData()->SetItem("vecPolaY", 0);
-
       }
     }
   }

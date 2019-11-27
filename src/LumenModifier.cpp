@@ -40,6 +40,8 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
+    //VertexBasedCellPopulation<DIM>* p_cell_population = static_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation);
+
     /**
      * This hack is needed because in the case of a MeshBasedCellPopulation in which
      * multiple cell divisions have occurred over one time step, the Voronoi tessellation
@@ -76,12 +78,33 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
       if (pCell->HasCellProperty<CellLumen>())
       {
 
+        if(pCell->GetCellData()->GetItem("mustDie") == 0)
+        {
+          pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_PREFFERED_SIZE);
+        }
+        else
+        {
+          pCell->StartApoptosis(2);
+          std::cout << pCell->GetCellData()->GetItem("mustDie") << std::endl;
+          //pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_DIYNG_SIZE);//parfois cela crash avec assert(area !=0)
 
+          //VertexElement<DIM, DIM>* p_element = p_cell_population->GetElementCorrespondingToCell(*cell_iter);
+          //unsigned p_index = p_element->GetIndex();
+          //double cell_perimeter = p_cell_population->rGetMesh().GetElongationShapeFactorOfElement(p_index);
+          //double cote = cell_perimeter / 4;
+          //double area = cote * cote;
 
-        pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_PREFFERED_SIZE);
+          //if(area < Parameters::SIZE_MIN_FOR_KILL)
+          //{
+          //  pCell->Kill();
+          //}
+        }
 
-
+        std::cout << pCell->GetCellData()->GetItem("mustDie") << std::endl;
     }
+
+
+
   }
 }
 
