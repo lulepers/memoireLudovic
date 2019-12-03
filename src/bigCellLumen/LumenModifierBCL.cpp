@@ -126,16 +126,63 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
 
                   double norme = sqrt(xl*xl + yl*yl);
 
-                  targetSize = targetSize + norme * SimulationParameters::BCL_LUMEN_SIZE_FACTOR;
+
+                  double coefSize = 1;
+
+                  if(pCell->GetAge() < SimulationParameters::BCL_AGE_TO_LUMEN_MATURITY)
+                  {
+                    coefSize = pCell->GetAge() / SimulationParameters::BCL_AGE_TO_LUMEN_MATURITY;
+                  }
+
+                  targetSize = targetSize + norme * SimulationParameters::BCL_LUMEN_SIZE_FACTOR * coefSize;
                 }
 
               }
+              bool neighbour_is_lumen = pnCell->template HasCellProperty<CellLumen>();
+              if(neighbour_is_lumen){
 
+                AbstractElement<DIM,DIM>* posOfOldCell = p_cell_population->GetElementCorrespondingToCell(pnCell);
+                AbstractElement<DIM,DIM>* posOfNewCell = p_cell_population->GetElementCorrespondingToCell(pCell);
+
+                unsigned num_nodes_in_element = posOfOldCell->GetNumNodes();
+                for (unsigned local_index=0; local_index<num_nodes_in_element; local_index++)
+                {
+                  unsigned node_index = posOfOldCell->GetNodeGlobalIndex(local_index);
+
+                  bool newNode = 1;
+
+
+                  unsigned num_nodes_in_elementb = posOfNewCell->GetNumNodes();
+                  for (unsigned j=0; j<num_nodes_in_elementb; j++)
+                  {
+                    unsigned node_indexb = posOfNewCell->GetNodeGlobalIndex(j);
+                    if(node_indexb == node_index)
+                    {
+                      newNode = 0;
+                    }
+
+
+                  }
+
+                  if(newNode)
+                  {
+                    posOfNewCell->AddNode(posOfOldCell->GetNode(local_index));
+                  }
+
+
+
+                }
+
+                pnCell->Kill();
+              }
 
             }
 
           }
           pCell->GetCellData()->SetItem("target area",targetSize);
+
+
+
     }
 
 

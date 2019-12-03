@@ -176,14 +176,52 @@ void LumenGenerationModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
               //CellLumen
               bool neighbour_is_lumen = p_neighbour_cell->template HasCellProperty<CellLumen>();
               if(neighbour_is_lumen){
-                pCell->GetCellData()->SetItem("lumenNearby",1);
+                pCell->GetCellData()->SetItem("lumenNearby",SimulationParameters::BCL_NBR_CELL_BETWEEN_TWO_LUMEN);
               }
 
 
 
             }
 
-          
+
+      }
+    }
+  }
+  //on repasse pour incrémenter les voisins
+  for (int i=SimulationParameters::BCL_NBR_CELL_BETWEEN_TWO_LUMEN; i>0; --i)
+  {
+
+    for (typename AbstractCellPopulation<DIM, DIM>::Iterator cell_iter = rCellPopulation.Begin();
+         cell_iter != rCellPopulation.End();
+         ++cell_iter)
+    {
+      CellPtr pCell = *cell_iter;
+      //IF Epithéliale
+
+      if (pCell->HasCellProperty<CellEpi>() && SimulationParameters::BCL_NBR_CELL_BETWEEN_TWO_LUMEN-1 > pCell->GetCellData()->GetItem("lumenNearby"))
+      {
+
+        VertexBasedCellPopulation<DIM>* p_cell_population = dynamic_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation) ;
+        std::set<unsigned> neighbour_indices = p_cell_population->GetNeighbouringLocationIndices(*cell_iter);
+
+        // If this cell has any neighbours (as defined by mesh/population/interaction distance)...
+        if (!neighbour_indices.empty() )
+        {
+          for (std::set<unsigned>::iterator neighbour_iter = neighbour_indices.begin();
+               neighbour_iter != neighbour_indices.end();
+               ++neighbour_iter)
+          {
+            CellPtr p_neighbour_cell = p_cell_population->GetCellUsingLocationIndex(*neighbour_iter);
+            if (p_neighbour_cell->HasCellProperty<CellEpi>())
+            {
+              if(p_neighbour_cell->GetCellData()->GetItem("lumenNearby")-1 >pCell->GetCellData()->GetItem("lumenNearby") && p_neighbour_cell->GetCellData()->GetItem("lumenNearby") > 0)
+              {
+                pCell->GetCellData()->SetItem("lumenNearby",p_neighbour_cell->GetCellData()->GetItem("lumenNearby")-1);
+                //std::cout << pCell->GetCellData()->GetItem("lumenNearby") << std::endl;
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -163,7 +163,7 @@ public:
         cell_iter->GetCellData()->SetItem("vecPolaX",0);
         cell_iter->GetCellData()->SetItem("vecPolaY",0);
 
-        if(counter ==2){
+        if(counter < 6){
           cell_iter->AddCellProperty(p_endo);
         }
         else{

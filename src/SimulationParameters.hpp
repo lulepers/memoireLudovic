@@ -23,6 +23,8 @@ public:
   //BCL
   static constexpr double BCL_TIME_BEETWEN_TWO_LUMEN_GENERATION = 0;
   static constexpr double BCL_LUMEN_SIZE_FACTOR = 0.125;
+  static constexpr double BCL_NBR_CELL_BETWEEN_TWO_LUMEN = 3;
+  static constexpr double BCL_AGE_TO_LUMEN_MATURITY = 15;
 
   //SCL
 
