@@ -4,10 +4,8 @@
 #include "NodeBasedCellPopulation.hpp"
 #include <stdlib.h>
 #include <math.h>
-#include "CellEpiDirection.hpp"
-#include "CellEndo.hpp"
-#include "CellLumen.hpp"
-#include "Parameters.hpp"
+
+#include "SimulationParameters.hpp"
 
 
 
@@ -54,7 +52,7 @@ void SimuInfoModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
 
 
 
-    double tempsParcouru = SimulationTime::Instance()->GetTime()/Parameters::TIME_OF_SIMULATION;
+    double tempsParcouru = SimulationTime::Instance()->GetTime()/SimulationParameters::TIME_OF_SIMULATION;
     int pourcent = tempsParcouru * 100;
 
     double cible = nbrPartInscrite/nbrPart;

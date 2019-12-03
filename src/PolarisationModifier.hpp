@@ -1,5 +1,5 @@
-#ifndef LUMENDESTRUCTIONMODIFIER_HPP_
-#define LUMENDESTRUCTIONMODIFIER_HPP_
+#ifndef POLARISATIONMODIFIER_HPP_
+#define POLARISATIONMODIFIER_HPP_
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -12,7 +12,7 @@
  * contact inhibition cell cycle models.
  */
 template<unsigned DIM>
-class LumenDestructionModifier : public AbstractCellBasedSimulationModifier<DIM,DIM>
+class PolarisationModifier : public AbstractCellBasedSimulationModifier<DIM,DIM>
 {
     /** Needed for serialization. */
     friend class boost::serialization::access;
@@ -34,12 +34,12 @@ public:
     /**
      * Default constructor.
      */
-    LumenDestructionModifier();
+    PolarisationModifier();
 
     /**
      * Destructor.
      */
-    virtual ~LumenDestructionModifier();
+    virtual ~PolarisationModifier();
 
     /**
      * Overridden UpdateAtEndOfTimeStep() method.
@@ -77,6 +77,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenDestructionModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(PolarisationModifier)
 
-#endif /*LumenDestructionModifier_HPP_*/
+#endif /*PolarisationModifier_HPP_*/

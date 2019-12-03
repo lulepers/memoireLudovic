@@ -1,6 +1,6 @@
 #include "CellPolarityXWriter.hpp"
 #include "AbstractCellPopulation.hpp"
-#include "CellEpiDirection.hpp"
+#include "CellEpi.hpp"
 
 
 template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
@@ -14,7 +14,7 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 double CellPolarityXWriter<ELEMENT_DIM, SPACE_DIM>::GetCellDataForVtkOutput(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
 {
     double vecPolaX = 0;
-    if (pCell->HasCellProperty<CellEpiDirection>())
+    if (pCell->HasCellProperty<CellEpi>())
     {
           vecPolaX = pCell->GetCellData()->GetItem("vecPolaX");
           //std::cout << vecPolaX << std::endl;
@@ -28,10 +28,10 @@ template<unsigned ELEMENT_DIM, unsigned SPACE_DIM>
 void CellPolarityXWriter<ELEMENT_DIM, SPACE_DIM>::VisitCell(CellPtr pCell, AbstractCellPopulation<ELEMENT_DIM, SPACE_DIM>* pCellPopulation)
 {
     double vecPolaX = 0;
-    if (pCell->HasCellProperty<CellEpiDirection>())
+    if (pCell->HasCellProperty<CellEpi>())
     {
-        //CellPropertyCollection collection = pCell->rGetCellPropertyCollection().GetProperties<CellEpiDirection>();
-        //boost::shared_ptr<CellEpiDirection> p_celltype = boost::static_pointer_cast<CellEpiDirection>(collection.GetProperty());
+        //CellPropertyCollection collection = pCell->rGetCellPropertyCollection().GetProperties<CellEpi>();
+        //boost::shared_ptr<CellEpi> p_celltype = boost::static_pointer_cast<CellEpi>(collection.GetProperty());
         vecPolaX = pCell->GetCellData()->GetItem("vecPolaX");
     }
 

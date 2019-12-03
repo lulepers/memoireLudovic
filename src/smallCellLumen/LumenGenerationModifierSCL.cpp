@@ -1,33 +1,35 @@
-#include "LumenGenerationModifier.hpp"
+#include "LumenGenerationModifierSCL.hpp"
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include <stdlib.h>
 #include <math.h>
-#include "CellEpiDirection.hpp"
+#include "CellEpi.hpp"
 #include "CellEndo.hpp"
 #include "CellLumen.hpp"
-#include "Parameters.hpp"
+#include "SimulationParameters.hpp"
+#include "SimulationParameters.hpp"
+
 
 template<unsigned DIM>
-LumenGenerationModifier<DIM>::LumenGenerationModifier()
+LumenGenerationModifierSCL<DIM>::LumenGenerationModifierSCL()
     : AbstractCellBasedSimulationModifier<DIM>()
 {
 }
 
 template<unsigned DIM>
-LumenGenerationModifier<DIM>::~LumenGenerationModifier()
+LumenGenerationModifierSCL<DIM>::~LumenGenerationModifierSCL()
 {
 }
 
 template<unsigned DIM>
-void LumenGenerationModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenGenerationModifierSCL<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     UpdateCellData(rCellPopulation);
 }
 
 template<unsigned DIM>
-void LumenGenerationModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
+void LumenGenerationModifierSCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
     /*
      * We must update CellData in SetupSolve(), otherwise it will not have been
@@ -37,7 +39,7 @@ void LumenGenerationModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& r
 }
 
 template<unsigned DIM>
-void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
@@ -74,7 +76,7 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
 
       CellPtr pCell = *cell_iter;
       //IF Epithéliale
-      if (pCell->HasCellProperty<CellEpiDirection>())
+      if (pCell->HasCellProperty<CellEpi>())
       {
         double timeFromLastGen = pCell->GetCellData()->GetItem("timeFromLastLumenGeneration");
 
@@ -83,9 +85,9 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
 
         double norme = sqrt(xl*xl + yl*yl);
         //pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
-      if(norme >Parameters::THRESHOLD_POLARISATION_EPI)
+      if(norme >SimulationParameters::THRESHOLD_POLARISATION_EPI)
       {
-        pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", timeFromLastGen + Parameters::TIMESTEP);
+        pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", timeFromLastGen + SimulationParameters::TIMESTEP);
       }
       else
       {
@@ -93,7 +95,7 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
         pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
       }
       //Si la cellule viens de se diviser et la simulation a durée assez longtemps
-      if(pCell->GetAge()<Parameters::AGE_DIV_MIN && SimulationTime::Instance()->GetTime() > 2 * Parameters::AGE_DIV_MIN)
+      if(pCell->GetAge()<SimulationParameters::SCL_AGE_DIV_MIN && SimulationTime::Instance()->GetTime() > 2 * SimulationParameters::SCL_AGE_DIV_MIN)
       {
 
 
@@ -112,7 +114,7 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
               CellPtr p_neighbour_cell = p_cell_population->GetCellUsingLocationIndex(*neighbour_iter);
 
               //Cell Epithéliale
-              bool neighbour_is_epiDir = p_neighbour_cell->template HasCellProperty<CellEpiDirection>();
+              bool neighbour_is_epiDir = p_neighbour_cell->template HasCellProperty<CellEpi>();
 
               if ( neighbour_is_epiDir == 1)
               {
@@ -140,26 +142,26 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
                   double VecFille = deltaXFille * deltaXFille + deltaYFille * deltaYFille;
 
                   if(VecMere < VecFille){
-                    p_neighbour_cell->RemoveCellProperty<CellEpiDirection>();
+                    p_neighbour_cell->RemoveCellProperty<CellEpi>();
                     MAKE_PTR(CellLumen, p_lumen);
                     p_neighbour_cell->AddCellProperty(p_lumen);
                     p_neighbour_cell->GetCellData()->SetItem("mustDie", 0);
                   }
 
                   else{
-                    pCell->RemoveCellProperty<CellEpiDirection>();
+                    pCell->RemoveCellProperty<CellEpi>();
                     MAKE_PTR(CellLumen, p_lumen);
                     pCell->AddCellProperty(p_lumen);
                     pCell->GetCellData()->SetItem("mustDie", 0);
                   }
 
-                  pCell->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
+                  pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
                   pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
                   pCell->GetCellData()->SetItem("vecPolaX", 0);
                   pCell->GetCellData()->SetItem("vecPolaY", 0);
 
-                  p_neighbour_cell->GetCellData()->SetItem("cellIndex",Parameters::getNextIndex());
+                  p_neighbour_cell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
                   p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
                   p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
@@ -184,17 +186,17 @@ void LumenGenerationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM
 
 
 template<unsigned DIM>
-void LumenGenerationModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
+void LumenGenerationModifierSCL<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
 }
 
 // Explicit instantiation
-template class LumenGenerationModifier<1>;
-template class LumenGenerationModifier<2>;
-template class LumenGenerationModifier<3>;
+template class LumenGenerationModifierSCL<1>;
+template class LumenGenerationModifierSCL<2>;
+template class LumenGenerationModifierSCL<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenGenerationModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenGenerationModifierSCL)

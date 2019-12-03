@@ -1,33 +1,31 @@
-#include "LumenDestructionModifier.hpp"
+#include "LumenDestructionModifierSCL.hpp"
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include <stdlib.h>
 #include <math.h>
-#include "CellEpiDirection.hpp"
 #include "CellEndo.hpp"
 #include "CellLumen.hpp"
-#include "Parameters.hpp"
 
 template<unsigned DIM>
-LumenDestructionModifier<DIM>::LumenDestructionModifier()
+LumenDestructionModifierSCL<DIM>::LumenDestructionModifierSCL()
     : AbstractCellBasedSimulationModifier<DIM>()
 {
 }
 
 template<unsigned DIM>
-LumenDestructionModifier<DIM>::~LumenDestructionModifier()
+LumenDestructionModifierSCL<DIM>::~LumenDestructionModifierSCL()
 {
 }
 
 template<unsigned DIM>
-void LumenDestructionModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenDestructionModifierSCL<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     UpdateCellData(rCellPopulation);
 }
 
 template<unsigned DIM>
-void LumenDestructionModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
+void LumenDestructionModifierSCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
     /*
      * We must update CellData in SetupSolve(), otherwise it will not have been
@@ -37,7 +35,7 @@ void LumenDestructionModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& 
 }
 
 template<unsigned DIM>
-void LumenDestructionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenDestructionModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
@@ -57,7 +55,7 @@ void LumenDestructionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DI
 
     if (dynamic_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation) == NULL)
     {
-        EXCEPTION("LumenDestructionModifier is to be used with a VertexBasedCellPopulation only");
+        EXCEPTION("LumenDestructionModifierSCL is to be used with a VertexBasedCellPopulation only");
     }
 
     // MAKE_PTR(CellBoundary, p_border);
@@ -167,17 +165,17 @@ void LumenDestructionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DI
 
 
 template<unsigned DIM>
-void LumenDestructionModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
+void LumenDestructionModifierSCL<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
 }
 
 // Explicit instantiation
-template class LumenDestructionModifier<1>;
-template class LumenDestructionModifier<2>;
-template class LumenDestructionModifier<3>;
+template class LumenDestructionModifierSCL<1>;
+template class LumenDestructionModifierSCL<2>;
+template class LumenDestructionModifierSCL<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenDestructionModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenDestructionModifierSCL)

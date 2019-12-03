@@ -1,5 +1,5 @@
-#ifndef TESTSMALLCELLLUMEN_HPP_
-#define TESTSMALLCELLLUMEN_HPP_
+#ifndef TESTBIGCELLLUMEN_HPP_
+#define TESTBIGCELLLUMEN_HPP_
 
 #include <cxxtest/TestSuite.h>
 #include "CheckpointArchiveTypes.hpp"
@@ -54,33 +54,31 @@
 
 #include <complex>
 
-#include "CycleEpiDirectionSCL.hpp"
-#include "CellEpi.hpp"
-#include "PolarisationModifier.hpp"
-#include "LumenGenerationModifierSCL.hpp"
-#include "LumenDestructionModifierSCL.hpp"
-#include "LumenModifierSCL.hpp"
-#include "SimuInfoModifier.hpp"
+#include "CycleBCL.hpp"
 
+#include "CellEpi.hpp"
 #include "CellEndo.hpp"
 
-#include "CellPolarityXWriter.hpp"
-#include "CellPolarityYWriter.hpp"
-
-#include "CellKillerSCL.hpp"
-
-//#include "MyCycle.hpp"
+#include "PolarisationModifier.hpp"
 
 #include "CellTypeWriter.hpp"
 
-#include "SimulationParameters.hpp"
+#include "SimuInfoModifier.hpp"
 #include "SimulationParameters.hpp"
 
-class TestSmallCellLumen : public AbstractCellBasedTestSuite
+
+
+
+class TestBigCellLumen : public AbstractCellBasedTestSuite
 {
 public:
 
-    void TestSmallCellLumenX()
+    //export CHASTE_TEST_OUTPUT=../Chaste_src/testoutput/
+    //SCL = smallCellLumen
+    //BCL = bigCellLumen
+
+
+    void TestBigCellLumenX()
     {
 
       //Parameters::init();
@@ -96,7 +94,7 @@ public:
       MAKE_PTR(TransitCellProliferativeType, p_transit_type);
       //MyCycle* cycle = new MyCycle();
       //CellsGenerator<cycle->CreateCellCycleModel(), 2> cells_generator;
-      CellsGenerator<CycleEpiDirectionSCL, 2> cells_generator;
+      CellsGenerator<CycleBCL, 2> cells_generator;
       cells_generator.GenerateBasicRandom(cells, p_mesh->GetNumElements(), p_transit_type);
 
       VertexBasedCellPopulation<2> cell_population(*p_mesh, cells);
@@ -109,7 +107,7 @@ public:
 
       OffLatticeSimulation<2> simulator(cell_population);
 
-      simulator.SetOutputDirectory("TestSmallCellLumen");
+      simulator.SetOutputDirectory("TestBigCellLumen");
       simulator.SetSamplingTimestepMultiple(SimulationParameters::SAMPLING_TIMESTEP);
       simulator.SetDt(SimulationParameters::TIMESTEP);
       //en heure, 24/48
@@ -129,37 +127,16 @@ public:
       MAKE_PTR(PolarisationModifier<2>, p_direction_modifier);
       simulator.AddSimulationModifier(p_direction_modifier);
 
-      MAKE_PTR(LumenDestructionModifierSCL<2>, p_lumen_destruction_modifier);
-      simulator.AddSimulationModifier(p_lumen_destruction_modifier);
-
-      MAKE_PTR(LumenGenerationModifierSCL<2>, p_lumen_generation_modifier);
-      simulator.AddSimulationModifier(p_lumen_generation_modifier);
-
-      MAKE_PTR(LumenModifierSCL<2>, p_lumen_modifier);
-      simulator.AddSimulationModifier(p_lumen_modifier);
-
 
       MAKE_PTR(SimuInfoModifier<2>, p_info_simu_modifier);
       simulator.AddSimulationModifier(p_info_simu_modifier);
 
       //Writer
-      cell_population.AddCellWriter<CellPolarityXWriter>();
-      cell_population.AddCellWriter<CellPolarityYWriter>();
       cell_population.AddCellWriter<CellTypeWriter>();
 
 
-      MAKE_PTR(CellEpi, p_epiDir);
-      MAKE_PTR(CellEndo, p_endo);
-
-
-
-
-      MAKE_PTR_ARGS(CellKillerSCL, p_killer, (&cell_population));
-
-      //simulator.AddCellKiller(p_killer);
-
-      //CycleEpiDirection* p_cell_cycle_model = new CycleEpiDirection();
-      SimulationParameters::getNextIndex();
+      //MAKE_PTR(CellEpi, p_epi);
+      //MAKE_PTR(CellEndo, p_endo);
 
       int counter = 0;
 
@@ -168,28 +145,16 @@ public:
            ++cell_iter)
       {
 
-        //On definit le cycle
-        //cell_iter->SetCellCycleModel();
-        //cell_iter->GetCellData()->SetItem("target area", 10);
 
-
-        cell_iter->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
-        cell_iter->GetCellData()->SetItem("timeFromLastLumenGeneration",0);
-        cell_iter->GetCellData()->SetItem("vecPolaX",0);
-        cell_iter->GetCellData()->SetItem("vecPolaY",0);
 
         if(counter ==2){
-          cell_iter->AddCellProperty(p_endo);
+          //cell_iter->AddCellProperty(p_endo);
         }
         else{
-          cell_iter->AddCellProperty(p_epiDir);
-
-
-
-
+          //cell_iter->AddCellProperty(p_epi);
         }
-        counter++;
 
+          counter = counter +1;
       }
 
       simulator.Solve();

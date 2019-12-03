@@ -1,5 +1,5 @@
-#ifndef DIRECTIONMODIFIER_HPP_
-#define DIRECTIONMODIFIER_HPP_
+#ifndef LUMENGENERATIONMODIFIERSCL_HPP_
+#define LUMENGENERATIONMODIFIERSCL_HPP_
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -12,7 +12,7 @@
  * contact inhibition cell cycle models.
  */
 template<unsigned DIM>
-class DirectionModifier : public AbstractCellBasedSimulationModifier<DIM,DIM>
+class LumenGenerationModifierSCL : public AbstractCellBasedSimulationModifier<DIM,DIM>
 {
     /** Needed for serialization. */
     friend class boost::serialization::access;
@@ -34,12 +34,12 @@ public:
     /**
      * Default constructor.
      */
-    DirectionModifier();
+    LumenGenerationModifierSCL();
 
     /**
      * Destructor.
      */
-    virtual ~DirectionModifier();
+    virtual ~LumenGenerationModifierSCL();
 
     /**
      * Overridden UpdateAtEndOfTimeStep() method.
@@ -77,6 +77,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(DirectionModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenGenerationModifierSCL)
 
-#endif /*DirectionModifier_HPP_*/
+#endif /*LumenGenerationModifierSCL_HPP_*/

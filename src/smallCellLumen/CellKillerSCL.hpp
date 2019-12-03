@@ -17,7 +17,7 @@
 
 #include "CellLumen.hpp"
 
-class CellKillerSmallCellLumen : public AbstractCellKiller<2>
+class CellKillerSCL : public AbstractCellKiller<2>
 {
 private:
 
@@ -30,7 +30,7 @@ private:
 
 public:
 
-    CellKillerSmallCellLumen(AbstractCellPopulation<2>* pCellPopulation)
+    CellKillerSCL(AbstractCellPopulation<2>* pCellPopulation)
         : AbstractCellKiller<2>(pCellPopulation)
     {}
 
@@ -81,9 +81,9 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-CHASTE_CLASS_EXPORT(CellKillerSmallCellLumen)
+CHASTE_CLASS_EXPORT(CellKillerSCL)
 #include "SerializationExportWrapperForCpp.hpp"
-CHASTE_CLASS_EXPORT(CellKillerSmallCellLumen)
+CHASTE_CLASS_EXPORT(CellKillerSCL)
 
 namespace boost
 {
@@ -91,7 +91,7 @@ namespace boost
     {
         template<class Archive>
         inline void save_construct_data(
-            Archive & ar, const CellKillerSmallCellLumen * t, const unsigned int file_version)
+            Archive & ar, const CellKillerSCL * t, const unsigned int file_version)
         {
             const AbstractCellPopulation<2>* const p_cell_population = t->GetCellPopulation();
             ar << p_cell_population;
@@ -99,13 +99,13 @@ namespace boost
 
         template<class Archive>
         inline void load_construct_data(
-            Archive & ar, CellKillerSmallCellLumen * t, const unsigned int file_version)
+            Archive & ar, CellKillerSCL * t, const unsigned int file_version)
         {
             AbstractCellPopulation<2>* p_cell_population;
             ar >> p_cell_population;
 
             // Invoke inplace constructor to initialise instance
-            ::new(t)CellKillerSmallCellLumen(p_cell_population);
+            ::new(t)CellKillerSCL(p_cell_population);
         }
     }
 }

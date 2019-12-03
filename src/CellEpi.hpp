@@ -1,16 +1,15 @@
-#ifndef CELLEPIDIRECTION_HPP_
-#define CELLEPIDIRECTION_HPP_
+#ifndef CELLEPI_HPP_
+#define CELLEPI_HPP_
 
 #include <boost/shared_ptr.hpp>
 #include "AbstractCellProperty.hpp"
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
 
-class CellEpiDirection : public AbstractCellProperty
+class CellEpi : public AbstractCellProperty
 {
 protected:
 
-    double vecPolarisation[2];
     unsigned mColour;
 
 private:
@@ -22,23 +21,19 @@ private:
     {
         archive & boost::serialization::base_object<AbstractCellProperty>(*this);
         archive & mColour;
-        archive & vecPolarisation;
     }
 
 public:
 
-    CellEpiDirection(unsigned colour=1);
+    CellEpi(unsigned colour=1);
 
-    virtual ~CellEpiDirection();
+    virtual ~CellEpi();
 
 
-
-    double* GetVecPolarisation();
-    double GetNormeVecPolarisation();
     unsigned GetColour() const;
 };
 
 #include "SerializationExportWrapper.hpp"
-CHASTE_CLASS_EXPORT(CellEpiDirection)
+CHASTE_CLASS_EXPORT(CellEpi)
 
 #endif

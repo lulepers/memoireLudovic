@@ -1,33 +1,34 @@
-#include "DirectionModifier.hpp"
+#include "PolarisationModifier.hpp"
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include <stdlib.h>
 #include <math.h>
-#include "CellEpiDirection.hpp"
+#include "CellEpi.hpp"
 #include "CellEndo.hpp"
 #include "CellLumen.hpp"
-#include "Parameters.hpp"
+#include "SimulationParameters.hpp"
+#include "SimulationParameters.hpp"
 
 template<unsigned DIM>
-DirectionModifier<DIM>::DirectionModifier()
+PolarisationModifier<DIM>::PolarisationModifier()
     : AbstractCellBasedSimulationModifier<DIM>()
 {
 }
 
 template<unsigned DIM>
-DirectionModifier<DIM>::~DirectionModifier()
+PolarisationModifier<DIM>::~PolarisationModifier()
 {
 }
 
 template<unsigned DIM>
-void DirectionModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void PolarisationModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     UpdateCellData(rCellPopulation);
 }
 
 template<unsigned DIM>
-void DirectionModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
+void PolarisationModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
     /*
      * We must update CellData in SetupSolve(), otherwise it will not have been
@@ -37,7 +38,7 @@ void DirectionModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPo
 }
 
 template<unsigned DIM>
-void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
@@ -76,7 +77,7 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
 
       //IF Epithéliale
-      if (pCell->HasCellProperty<CellEpiDirection>())
+      if (pCell->HasCellProperty<CellEpi>())
       {
         double vecPolaX = pCell->GetCellData()->GetItem("vecPolaX");
         double vecPolaY = pCell->GetCellData()->GetItem("vecPolaY");
@@ -84,21 +85,21 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
         //diminution naturelle
         //if(vecPolaX > 0){
-        //  vecPolaX = vecPolaX - Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
+        //  vecPolaX = vecPolaX - SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
         //}
         //else if(vecPolaX < 0){
-        //  vecPolaX = vecPolaX+ Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
+        //  vecPolaX = vecPolaX+ SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
         //}
 
         //if(vecPolaY > 0){
-        //  vecPolaY = vecPolaY - Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
+        //  vecPolaY = vecPolaY - SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
         //}
         //else if(vecPolaY < 0){
-        //  vecPolaY = vecPolaY + Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
+        //  vecPolaY = vecPolaY + SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
         //}
 
-        vecPolaX = vecPolaX - vecPolaX * Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
-        vecPolaY = vecPolaY - vecPolaY * Parameters::VEC_POLARISATION_DECREASE * Parameters::TIMESTEP;
+        vecPolaX = vecPolaX - vecPolaX * SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
+        vecPolaY = vecPolaY - vecPolaY * SimulationParameters::VEC_POLARISATION_DECREASE * SimulationParameters::TIMESTEP;
 
 
 
@@ -120,7 +121,7 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
                 CellPtr p_neighbour_cell = p_cell_population->GetCellUsingLocationIndex(*neighbour_iter);
 
                 //Cell Epithéliale
-                bool neighbour_is_epiDir = p_neighbour_cell->template HasCellProperty<CellEpiDirection>();
+                bool neighbour_is_epiDir = p_neighbour_cell->template HasCellProperty<CellEpi>();
 
 
                 //Cell endothéliale
@@ -141,17 +142,17 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
 
                   if(vecPolaXNeighbour > 0){
-                    vecPolaX = vecPolaX + Parameters::IMPACT_POLARISATION_EPI_ON_EPI * Parameters::TIMESTEP;
+                    vecPolaX = vecPolaX + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
                   }
                   else if(vecPolaXNeighbour < 0){
-                    vecPolaX = vecPolaX - Parameters::IMPACT_POLARISATION_EPI_ON_EPI * Parameters::TIMESTEP;
+                    vecPolaX = vecPolaX - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
                   }
 
                   if(vecPolaYNeighbour > 0){
-                    vecPolaY = vecPolaY + Parameters::IMPACT_POLARISATION_EPI_ON_EPI * Parameters::TIMESTEP;
+                    vecPolaY = vecPolaY + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
                   }
                   else if(vecPolaYNeighbour < 0){
-                    vecPolaY = vecPolaY - Parameters::IMPACT_POLARISATION_EPI_ON_EPI * Parameters::TIMESTEP;
+                    vecPolaY = vecPolaY - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
                   }
                 }
 
@@ -165,8 +166,8 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
                   double normalisation = sqrt(dx*dx + dy*dy);
 
-                  vecPolaX = vecPolaX + dx / normalisation * Parameters::IMPACT_POLARISATION_ENDO_ON_EPI * Parameters::TIMESTEP;
-                  vecPolaY = vecPolaY + dy / normalisation * Parameters::IMPACT_POLARISATION_ENDO_ON_EPI * Parameters::TIMESTEP;
+                  vecPolaX = vecPolaX + dx / normalisation * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaY = vecPolaY + dy / normalisation * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
 
                   //std::cout << vecPolaX << std::endl;
 
@@ -183,8 +184,8 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
                   double normalisation = sqrt(dx*dx + dy*dy);
 
-                  vecPolaX = vecPolaX + dx / normalisation * Parameters::IMPACT_POLARISATION_LUMEN_ON_EPI * Parameters::TIMESTEP;
-                  vecPolaY = vecPolaY + dy / normalisation * Parameters::IMPACT_POLARISATION_LUMEN_ON_EPI * Parameters::TIMESTEP;
+                  vecPolaX = vecPolaX + dx / normalisation * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaY = vecPolaY + dy / normalisation * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
 
                   //std::cout << vecPolaX << std::endl;
 
@@ -207,17 +208,17 @@ void DirectionModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCe
 
 
 template<unsigned DIM>
-void DirectionModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
+void PolarisationModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
 {
-    // No parameters to output, so just call method on direct parent class
+    // No SimulationParameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
 }
 
 // Explicit instantiation
-template class DirectionModifier<1>;
-template class DirectionModifier<2>;
-template class DirectionModifier<3>;
+template class PolarisationModifier<1>;
+template class PolarisationModifier<2>;
+template class PolarisationModifier<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(DirectionModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(PolarisationModifier)

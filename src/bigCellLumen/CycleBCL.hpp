@@ -33,8 +33,8 @@
 
  */
 
-#ifndef CYCLEEPIDIRECTION_HPP_
-#define CYCLEEPIDIRECTION_HPP_
+#ifndef CYCLEBCL_HPP_
+#define CYCLEBCL_HPP_
 
 #include "AbstractSimplePhaseBasedCellCycleModel.hpp"
 
@@ -46,7 +46,7 @@
  * of dividing per hour; the second, mMinimumDivisionAge, defines a minimum age at which cells
  * may divide.
  */
-class CycleEpiDirection : public AbstractSimplePhaseBasedCellCycleModel
+class CycleBCL : public AbstractSimplePhaseBasedCellCycleModel
 {
 private:
 
@@ -83,14 +83,14 @@ protected:
      *
      * @param rModel the cell cycle model to copy.
      */
-    CycleEpiDirection(const CycleEpiDirection& rModel);
+    CycleBCL(const CycleBCL& rModel);
 
 public:
 
     /**
      * Constructor.
      */
-    CycleEpiDirection();
+    CycleBCL();
 
     /**
      * Overridden ReadyToDivide() method.
@@ -143,6 +143,6 @@ public:
 
 // Declare identifier for the serializer
 #include "SerializationExportWrapper.hpp"
-CHASTE_CLASS_EXPORT(CycleEpiDirection)
+CHASTE_CLASS_EXPORT(CycleBCL)
 
-#endif // CycleEpiDirection_HPP_
+#endif // CycleBCL_HPP_

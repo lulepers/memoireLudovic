@@ -1,4 +1,4 @@
-#include "LumenModifier.hpp"
+#include "LumenModifierSCL.hpp"
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
@@ -7,27 +7,27 @@
 //#include "ApoptoticCellProperty.hpp"
 #include "CellEndo.hpp"
 #include "CellLumen.hpp"
-#include "Parameters.hpp"
+#include "SimulationParameters.hpp"
 
 template<unsigned DIM>
-LumenModifier<DIM>::LumenModifier()
+LumenModifierSCL<DIM>::LumenModifierSCL()
     : AbstractCellBasedSimulationModifier<DIM>()
 {
 }
 
 template<unsigned DIM>
-LumenModifier<DIM>::~LumenModifier()
+LumenModifierSCL<DIM>::~LumenModifierSCL()
 {
 }
 
 template<unsigned DIM>
-void LumenModifier<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenModifierSCL<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     UpdateCellData(rCellPopulation);
 }
 
 template<unsigned DIM>
-void LumenModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
+void LumenModifierSCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
     /*
      * We must update CellData in SetupSolve(), otherwise it will not have been
@@ -37,7 +37,7 @@ void LumenModifier<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopula
 }
 
 template<unsigned DIM>
-void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
@@ -81,7 +81,7 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
 
         if(pCell->GetCellData()->GetItem("mustDie") == 0)
         {
-          pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_PREFFERED_SIZE);
+          pCell->GetCellData()->SetItem("target area", SimulationParameters::SCL_CELLLUMEN_PREFFERED_SIZE);
         }
         else
         {
@@ -93,13 +93,13 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
           //unsigned p_index = p_element->GetIndex();
           //double cell_perimeter = p_cell_population->rGetMesh().GetElongationShapeFactorOfElement(p_index);
           //double cote = cell_perimeter / 4;
-          pCell->GetCellData()->SetItem("target area", Parameters::CELLLUMEN_DIYNG_SIZE);
+          pCell->GetCellData()->SetItem("target area", SimulationParameters::SCL_CELLLUMEN_DIYNG_SIZE);
           //double area = rCellPopulation.GetVolumeOfCell(pCell);
 
           //std::cout << SimulationTime::Instance()->GetTime() << "  < " << pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL << std::endl;
 
           //if(area < Parameters::SIZE_MIN_FOR_KILL && SimulationTime::Instance()->GetTime() > pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL)
-          if(SimulationTime::Instance()->GetTime() > pCell->GetCellData()->GetItem("timeOfStartDying")+ Parameters::TIME_BEFORE_KILL)
+          if(SimulationTime::Instance()->GetTime() > pCell->GetCellData()->GetItem("timeOfStartDying")+ SimulationParameters::SCL_TIME_BEFORE_KILL)
           {
             pCell->Kill();
           }
@@ -116,17 +116,17 @@ void LumenModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPo
 
 
 template<unsigned DIM>
-void LumenModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
+void LumenModifierSCL<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
 }
 
 // Explicit instantiation
-template class LumenModifier<1>;
-template class LumenModifier<2>;
-template class LumenModifier<3>;
+template class LumenModifierSCL<1>;
+template class LumenModifierSCL<2>;
+template class LumenModifierSCL<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenModifierSCL)

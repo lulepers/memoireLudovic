@@ -1,5 +1,5 @@
-#ifndef LUMENMODIFIER_HPP_
-#define LUMENMODIFIER_HPP_
+#ifndef LUMENMODIFIERSCL_HPP_
+#define LUMENMODIFIERSCL_HPP_
 
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
@@ -12,7 +12,7 @@
  * contact inhibition cell cycle models.
  */
 template<unsigned DIM>
-class LumenModifier : public AbstractCellBasedSimulationModifier<DIM,DIM>
+class LumenModifierSCL : public AbstractCellBasedSimulationModifier<DIM,DIM>
 {
     /** Needed for serialization. */
     friend class boost::serialization::access;
@@ -34,12 +34,12 @@ public:
     /**
      * Default constructor.
      */
-    LumenModifier();
+    LumenModifierSCL();
 
     /**
      * Destructor.
      */
-    virtual ~LumenModifier();
+    virtual ~LumenModifierSCL();
 
     /**
      * Overridden UpdateAtEndOfTimeStep() method.
@@ -77,6 +77,6 @@ public:
 };
 
 #include "SerializationExportWrapper.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenModifier)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenModifierSCL)
 
-#endif /*LumenModifier_HPP_*/
+#endif /*LumenModifierSCL_HPP_*/

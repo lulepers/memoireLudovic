@@ -33,18 +33,18 @@
 
  */
 
-#include "CycleEpiDirection.hpp"
-#include "CellEpiDirection.hpp"
+#include "CycleEpiDirectionSCL.hpp"
+#include "CellEpi.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "DifferentiatedCellProliferativeType.hpp"
-#include "Parameters.hpp"
+#include "SimulationParameters.hpp"
 
-CycleEpiDirection::CycleEpiDirection()
+CycleEpiDirectionSCL::CycleEpiDirectionSCL()
 : AbstractSimplePhaseBasedCellCycleModel()
 {
 }
 
-CycleEpiDirection::CycleEpiDirection(const CycleEpiDirection& rModel)
+CycleEpiDirectionSCL::CycleEpiDirectionSCL(const CycleEpiDirectionSCL& rModel)
 : AbstractSimplePhaseBasedCellCycleModel(rModel)
 {
     /*
@@ -55,12 +55,12 @@ CycleEpiDirection::CycleEpiDirection(const CycleEpiDirection& rModel)
      */
 }
 
-bool CycleEpiDirection::ReadyToDivide()
+bool CycleEpiDirectionSCL::ReadyToDivide()
 {
   assert(mpCell != nullptr);
   if (!mReadyToDivide)
   {
-    if (mpCell->HasCellProperty<CellEpiDirection>())
+    if (mpCell->HasCellProperty<CellEpi>())
     {
       double timeFromLastGen = mpCell->GetCellData()->GetItem("timeFromLastLumenGeneration");
 
@@ -68,10 +68,10 @@ bool CycleEpiDirection::ReadyToDivide()
       double yl = mpCell->GetCellData()->GetItem("vecPolaY");
 
       double norme = sqrt(xl*xl + yl*yl);
-      if(norme >Parameters::THRESHOLD_POLARISATION_EPI)
+      if(norme >SimulationParameters::THRESHOLD_POLARISATION_EPI)
       {
 
-        if(timeFromLastGen > Parameters::TIME_BEETWEN_TWO_LUMEN_GENERATION)
+        if(timeFromLastGen > SimulationParameters::SCL_TIME_BEETWEN_TWO_LUMEN_GENERATION)
         {
           if (GetAge() > GetMinimumDivisionAge())
           {
@@ -84,31 +84,31 @@ bool CycleEpiDirection::ReadyToDivide()
   return mReadyToDivide;
 }
 
-AbstractSimplePhaseBasedCellCycleModel* CycleEpiDirection::CreateCellCycleModel()
+AbstractSimplePhaseBasedCellCycleModel* CycleEpiDirectionSCL::CreateCellCycleModel()
 {
-    return new CycleEpiDirection(*this);
+    return new CycleEpiDirectionSCL(*this);
 }
 
 
-double CycleEpiDirection::GetMinimumDivisionAge()
+double CycleEpiDirectionSCL::GetMinimumDivisionAge()
 {
-    return Parameters::TIME_BEETWEN_TWO_LUMEN_GENERATION;
+    return SimulationParameters::SCL_TIME_BEETWEN_TWO_LUMEN_GENERATION;
 }
 
-double CycleEpiDirection::GetAverageTransitCellCycleTime()
-{
-    return 1.0;
-}
-
-double CycleEpiDirection::GetAverageStemCellCycleTime()
+double CycleEpiDirectionSCL::GetAverageTransitCellCycleTime()
 {
     return 1.0;
 }
 
-void CycleEpiDirection::OutputCellCycleModelParameters(out_stream& rParamsFile)
+double CycleEpiDirectionSCL::GetAverageStemCellCycleTime()
+{
+    return 1.0;
+}
+
+void CycleEpiDirectionSCL::OutputCellCycleModelParameters(out_stream& rParamsFile)
 {
     //*rParamsFile << "\t\t\t<MaxArea>" << mMaxArea << "</MaxArea>\n";
-    *rParamsFile << "\t\t\t<MinimumDivisionAge>" << Parameters::TIME_BEETWEN_TWO_LUMEN_GENERATION << "</MinimumDivisionAge>\n";
+    *rParamsFile << "\t\t\t<MinimumDivisionAge>" << SimulationParameters::SCL_TIME_BEETWEN_TWO_LUMEN_GENERATION << "</MinimumDivisionAge>\n";
 
     // Call method on direct parent class
     AbstractSimplePhaseBasedCellCycleModel::OutputCellCycleModelParameters(rParamsFile);
@@ -116,4 +116,4 @@ void CycleEpiDirection::OutputCellCycleModelParameters(out_stream& rParamsFile)
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-CHASTE_CLASS_EXPORT(CycleEpiDirection)
+CHASTE_CLASS_EXPORT(CycleEpiDirectionSCL)
