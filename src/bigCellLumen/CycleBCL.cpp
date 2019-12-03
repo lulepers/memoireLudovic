@@ -60,7 +60,30 @@ bool CycleBCL::ReadyToDivide()
   assert(mpCell != nullptr);
   if (!mReadyToDivide)
   {
+    if (mpCell->HasCellProperty<CellEpi>())
+    {
+      double timeFromLastGen = mpCell->GetCellData()->GetItem("timeFromLastLumenGeneration");
 
+      double xl = mpCell->GetCellData()->GetItem("vecPolaX");
+      double yl = mpCell->GetCellData()->GetItem("vecPolaY");
+
+      double norme = sqrt(xl*xl + yl*yl);
+      if(norme >SimulationParameters::THRESHOLD_POLARISATION_EPI)
+      {
+
+        if(timeFromLastGen > SimulationParameters::BCL_TIME_BEETWEN_TWO_LUMEN_GENERATION)
+        {
+          if (GetAge() > GetMinimumDivisionAge())
+          {
+            if(mpCell->GetCellData()->GetItem("lumenNearby") == 0)
+            {
+              mReadyToDivide = true;
+            }
+
+          }
+        }
+      }
+    }
   }
   return mReadyToDivide;
 }

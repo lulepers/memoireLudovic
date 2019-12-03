@@ -18,16 +18,17 @@ public:
   static constexpr double VEC_POLARISATION_DECREASE = 0.8;
 
   static constexpr double THRESHOLD_POLARISATION_EPI = 3;
-
+  static constexpr double AGE_DIV_MIN = 0.05;
 
   //BCL
-
+  static constexpr double BCL_TIME_BEETWEN_TWO_LUMEN_GENERATION = 0;
+  static constexpr double BCL_LUMEN_SIZE_FACTOR = 0.125;
 
   //SCL
 
   static constexpr double SCL_TIME_BEETWEN_TWO_LUMEN_GENERATION = 2;
 
-  static constexpr double SCL_AGE_DIV_MIN = 0.05;
+
 
   static constexpr double SCL_CELLLUMEN_PREFFERED_SIZE = 0.3;
   static constexpr double SCL_CELLLUMEN_DIYNG_SIZE = 0.06;

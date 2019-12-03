@@ -1,4 +1,4 @@
-#include "LumenGenerationModifierSCL.hpp"
+#include "LumenGenerationModifierBCL.hpp"
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
@@ -12,24 +12,24 @@
 
 
 template<unsigned DIM>
-LumenGenerationModifierSCL<DIM>::LumenGenerationModifierSCL()
+LumenGenerationModifierBCL<DIM>::LumenGenerationModifierBCL()
     : AbstractCellBasedSimulationModifier<DIM>()
 {
 }
 
 template<unsigned DIM>
-LumenGenerationModifierSCL<DIM>::~LumenGenerationModifierSCL()
+LumenGenerationModifierBCL<DIM>::~LumenGenerationModifierBCL()
 {
 }
 
 template<unsigned DIM>
-void LumenGenerationModifierSCL<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenGenerationModifierBCL<DIM>::UpdateAtEndOfTimeStep(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     UpdateCellData(rCellPopulation);
 }
 
 template<unsigned DIM>
-void LumenGenerationModifierSCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
+void LumenGenerationModifierBCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>& rCellPopulation, std::string outputDirectory)
 {
     /*
      * We must update CellData in SetupSolve(), otherwise it will not have been
@@ -39,7 +39,7 @@ void LumenGenerationModifierSCL<DIM>::SetupSolve(AbstractCellPopulation<DIM,DIM>
 }
 
 template<unsigned DIM>
-void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
+void LumenGenerationModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation)
 {
     // Make sure the cell population is updated
     rCellPopulation.Update();
@@ -79,7 +79,7 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
       if (pCell->HasCellProperty<CellEpi>())
       {
         double timeFromLastGen = pCell->GetCellData()->GetItem("timeFromLastLumenGeneration");
-
+        pCell->GetCellData()->SetItem("lumenNearby",0);
         double xl = pCell->GetCellData()->GetItem("vecPolaX");
         double yl = pCell->GetCellData()->GetItem("vecPolaY");
 
@@ -94,9 +94,6 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
         //Si le vecteur est en dessous du trheshold on le mets à 0
         pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
       }
-      //Si la cellule viens de se diviser et la simulation a durée assez longtemps
-      if(pCell->GetAge()<SimulationParameters::AGE_DIV_MIN && SimulationTime::Instance()->GetTime() > 2 * SimulationParameters::AGE_DIV_MIN)
-      {
 
 
         //on cherche la cellule fille
@@ -146,6 +143,8 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
                     MAKE_PTR(CellLumen, p_lumen);
                     p_neighbour_cell->AddCellProperty(p_lumen);
                     p_neighbour_cell->GetCellData()->SetItem("mustDie", 0);
+                    p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
+                    p_neighbour_cell->GetCellData()->SetItem("vecPolaY", 0);
                   }
 
                   else{
@@ -153,19 +152,19 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
                     MAKE_PTR(CellLumen, p_lumen);
                     pCell->AddCellProperty(p_lumen);
                     pCell->GetCellData()->SetItem("mustDie", 0);
+                    pCell->GetCellData()->SetItem("vecPolaX", 0);
+                    pCell->GetCellData()->SetItem("vecPolaY", 0);
                   }
 
                   pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
                   pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
-                  pCell->GetCellData()->SetItem("vecPolaX", 0);
-                  pCell->GetCellData()->SetItem("vecPolaY", 0);
+
 
                   p_neighbour_cell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
                   p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
-                  p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
-                  p_neighbour_cell->GetCellData()->SetItem("vecPolaY", 0);
+
 
 
 
@@ -174,10 +173,17 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
               }
 
 
+              //CellLumen
+              bool neighbour_is_lumen = p_neighbour_cell->template HasCellProperty<CellLumen>();
+              if(neighbour_is_lumen){
+                pCell->GetCellData()->SetItem("lumenNearby",1);
+              }
+
+
 
             }
 
-          }
+          
       }
     }
   }
@@ -186,17 +192,17 @@ void LumenGenerationModifierSCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 
 
 template<unsigned DIM>
-void LumenGenerationModifierSCL<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
+void LumenGenerationModifierBCL<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)
 {
     // No parameters to output, so just call method on direct parent class
     AbstractCellBasedSimulationModifier<DIM>::OutputSimulationModifierParameters(rParamsFile);
 }
 
 // Explicit instantiation
-template class LumenGenerationModifierSCL<1>;
-template class LumenGenerationModifierSCL<2>;
-template class LumenGenerationModifierSCL<3>;
+template class LumenGenerationModifierBCL<1>;
+template class LumenGenerationModifierBCL<2>;
+template class LumenGenerationModifierBCL<3>;
 
 // Serialization for Boost >= 1.36
 #include "SerializationExportWrapperForCpp.hpp"
-EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenGenerationModifierSCL)
+EXPORT_TEMPLATE_CLASS_SAME_DIMS(LumenGenerationModifierBCL)

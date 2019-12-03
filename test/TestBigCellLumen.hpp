@@ -62,8 +62,14 @@
 #include "PolarisationModifier.hpp"
 
 #include "CellTypeWriter.hpp"
+#include "CellPolarityXWriter.hpp"
+#include "CellPolarityYWriter.hpp"
 
 #include "SimuInfoModifier.hpp"
+#include "LumenGenerationModifierBCL.hpp"
+#include "LumenModifierBCL.hpp"
+
+
 #include "SimulationParameters.hpp"
 
 
@@ -124,19 +130,25 @@ public:
       MAKE_PTR(SimpleTargetAreaModifier<2>, p_growth_modifier);
       simulator.AddSimulationModifier(p_growth_modifier);
 
-      MAKE_PTR(PolarisationModifier<2>, p_direction_modifier);
-      simulator.AddSimulationModifier(p_direction_modifier);
+      MAKE_PTR(PolarisationModifier<2>, p_polarisation_modifier);
+      simulator.AddSimulationModifier(p_polarisation_modifier);
 
+      MAKE_PTR(LumenGenerationModifierBCL<2>, p_lumen_generation_modifier);
+      simulator.AddSimulationModifier(p_lumen_generation_modifier);
+
+      MAKE_PTR(LumenModifierBCL<2>, p_lumen_modifier);
+      simulator.AddSimulationModifier(p_lumen_modifier);
 
       MAKE_PTR(SimuInfoModifier<2>, p_info_simu_modifier);
       simulator.AddSimulationModifier(p_info_simu_modifier);
 
       //Writer
       cell_population.AddCellWriter<CellTypeWriter>();
+      cell_population.AddCellWriter<CellPolarityXWriter>();
+      cell_population.AddCellWriter<CellPolarityYWriter>();
 
-
-      //MAKE_PTR(CellEpi, p_epi);
-      //MAKE_PTR(CellEndo, p_endo);
+      MAKE_PTR(CellEpi, p_epi);
+      MAKE_PTR(CellEndo, p_endo);
 
       int counter = 0;
 
@@ -145,13 +157,18 @@ public:
            ++cell_iter)
       {
 
-
+        cell_iter->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
+        cell_iter->GetCellData()->SetItem("timeFromLastLumenGeneration",0);
+        cell_iter->GetCellData()->SetItem("lumenNearby",1);
+        cell_iter->GetCellData()->SetItem("vecPolaX",0);
+        cell_iter->GetCellData()->SetItem("vecPolaY",0);
 
         if(counter ==2){
-          //cell_iter->AddCellProperty(p_endo);
+          cell_iter->AddCellProperty(p_endo);
         }
         else{
-          //cell_iter->AddCellProperty(p_epi);
+          cell_iter->AddCellProperty(p_epi);
+
         }
 
           counter = counter +1;

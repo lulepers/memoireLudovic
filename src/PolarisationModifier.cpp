@@ -196,8 +196,7 @@ void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
         }
         pCell->GetCellData()->SetItem("vecPolaX",vecPolaX);
         pCell->GetCellData()->SetItem("vecPolaY",vecPolaY);
-        //std::cout << vecPolaX << std::endl;
-        //std::cout << vecPolaY << std::endl;
+        
       }
 
 
