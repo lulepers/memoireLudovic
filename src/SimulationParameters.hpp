@@ -11,13 +11,13 @@ public:
 
   //Commun aux simulations
 
-  static constexpr double IMPACT_POLARISATION_EPI_ON_EPI = 0.2;
-  static constexpr double IMPACT_POLARISATION_ENDO_ON_EPI = 2;
-  static constexpr double IMPACT_POLARISATION_LUMEN_ON_EPI = -1;
+  static constexpr double IMPACT_POLARISATION_EPI_ON_EPI = -0.9;
+  static constexpr double IMPACT_POLARISATION_ENDO_ON_EPI = 2.1;
+  static constexpr double IMPACT_POLARISATION_LUMEN_ON_EPI = -1.2;
 
-  static constexpr double VEC_POLARISATION_DECREASE = 0.8;
+  static constexpr double VEC_POLARISATION_DECREASE = 1;
 
-  static constexpr double THRESHOLD_POLARISATION_EPI = 3;
+  static constexpr double THRESHOLD_POLARISATION_EPI = 4;
   static constexpr double AGE_DIV_MIN = 0.05;
 
   //BCL

@@ -2,6 +2,7 @@
 #include "MeshBasedCellPopulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
 #include "NodeBasedCellPopulation.hpp"
+#include "VertexElement.hpp"
 #include <stdlib.h>
 #include <math.h>
 //#include "ApoptoticCellProperty.hpp"
@@ -74,8 +75,6 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
          ++cell_iter)
     {
 
-
-
       CellPtr pCell = *cell_iter;
 
       if (pCell->HasCellProperty<CellLumen>())
@@ -141,43 +140,43 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
               bool neighbour_is_lumen = pnCell->template HasCellProperty<CellLumen>();
               if(neighbour_is_lumen){
 
-                AbstractElement<DIM,DIM>* posOfOldCell = p_cell_population->GetElementCorrespondingToCell(pnCell);
-                AbstractElement<DIM,DIM>* posOfNewCell = p_cell_population->GetElementCorrespondingToCell(pCell);
+                VertexElement<DIM,DIM>* posOfOldCell = p_cell_population->GetElementCorrespondingToCell(pnCell);
+                VertexElement<DIM,DIM>* posOfNewCell = p_cell_population->GetElementCorrespondingToCell(pCell);
 
-                unsigned num_nodes_in_element = posOfOldCell->GetNumNodes();
-                for (unsigned local_index=0; local_index<num_nodes_in_element; local_index++)
+                unsigned num_nodes_in_element_new = posOfNewCell->GetNumNodes();
+
+
+                for (unsigned i=0; i<num_nodes_in_element_new; i++)
                 {
-                  unsigned node_index = posOfOldCell->GetNodeGlobalIndex(local_index);
-
-                  bool newNode = 1;
-
-
-                  unsigned num_nodes_in_elementb = posOfNewCell->GetNumNodes();
-                  for (unsigned j=0; j<num_nodes_in_elementb; j++)
+                  unsigned num_nodes_in_element_old = posOfOldCell->GetNumNodes();
+                  bool copyOfOld = 0;
+                  unsigned indexOld = 0;
+                  for (unsigned j=0; j<num_nodes_in_element_old; j++)
                   {
-                    unsigned node_indexb = posOfNewCell->GetNodeGlobalIndex(j);
-                    if(node_indexb == node_index)
+                    std::cout << i << "/" << j << '\n';
+                    if(posOfNewCell->GetNodeGlobalIndex(i) == posOfOldCell->GetNodeGlobalIndex(j))
                     {
-                      newNode = 0;
+                      copyOfOld = 1;
+                      indexOld = j;
                     }
-
-
                   }
 
-                  if(newNode)
+
+                  if(copyOfOld == 1)
                   {
-                    posOfNewCell->AddNode(posOfOldCell->GetNode(local_index));
+                    std::cout << indexOld << "jOld" << '\n';
+
+
+                    //posOfNewCell->AddNode(posOfOldCell->GetNode(indexOld),0);
+                    //posOfOldCell->DeleteNode(indexOld);
+                    std::cout << "b" << '\n';
                   }
-
-
-
                 }
-
+                //p_cell_population->rGetMesh().PermuteNodes();
+                std::cout << "Kill" << '\n';
                 pnCell->Kill();
               }
-
             }
-
           }
           pCell->GetCellData()->SetItem("target area",targetSize);
 
@@ -189,6 +188,7 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
 
 
   }
+
 
 
 }

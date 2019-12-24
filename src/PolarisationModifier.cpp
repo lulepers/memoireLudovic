@@ -131,6 +131,14 @@ void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
                 bool neighbour_is_lumen = p_neighbour_cell->template HasCellProperty<CellLumen>();
 
 
+                c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
+                c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
+
+                double dx = cell_location[0] - neighbour_location[0];
+                double dy = cell_location[1] - neighbour_location[1];
+
+
+                double normalisationInterCell = sqrt(dx*dx + dy*dy);
 
 
                 if ( neighbour_is_epiDir == 1)
@@ -141,33 +149,35 @@ void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
                   double vecPolaYNeighbour = p_neighbour_cell->GetCellData()->GetItem("vecPolaY");
 
 
+                  double prodScalaire = (dx*vecPolaXNeighbour+vecPolaYNeighbour*dy);
+
+                  double normeVecPolaNeighbour = sqrt(vecPolaXNeighbour * vecPolaXNeighbour + vecPolaYNeighbour * vecPolaYNeighbour);
+
+                  //cos angle fr.wikihow.com/calculer-l'angle-entre-deux-vecteurs
+                  double cosAngle = prodScalaire/(normeVecPolaNeighbour*normalisationInterCell);
+                  cosAngle = sqrt(cosAngle*cosAngle);//valeur absolue
+                  //std::cout << cosAngle << "  " << normalisationInterCell << " " << prodScalaire << "  " << normeVecPolaNeighbour << '\n';
                   if(vecPolaXNeighbour > 0){
-                    vecPolaX = vecPolaX + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
+                    vecPolaX = vecPolaX + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP*cosAngle;
                   }
                   else if(vecPolaXNeighbour < 0){
-                    vecPolaX = vecPolaX - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
+                    vecPolaX = vecPolaX - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP*cosAngle;
                   }
 
                   if(vecPolaYNeighbour > 0){
-                    vecPolaY = vecPolaY + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
+                    vecPolaY = vecPolaY + SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP*cosAngle;
                   }
                   else if(vecPolaYNeighbour < 0){
-                    vecPolaY = vecPolaY - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP;
+                    vecPolaY = vecPolaY - SimulationParameters::IMPACT_POLARISATION_EPI_ON_EPI * SimulationParameters::TIMESTEP*cosAngle;
                   }
                 }
 
                 if(neighbour_is_endo == 1){
 
-                  c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
-                  c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
 
-                  double dx = cell_location[0] - neighbour_location[0];
-                  double dy = cell_location[1] - neighbour_location[1];
 
-                  double normalisation = sqrt(dx*dx + dy*dy);
-
-                  vecPolaX = vecPolaX + dx / normalisation * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
-                  vecPolaY = vecPolaY + dy / normalisation * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaX = vecPolaX + dx / normalisationInterCell * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaY = vecPolaY + dy / normalisationInterCell * SimulationParameters::IMPACT_POLARISATION_ENDO_ON_EPI * SimulationParameters::TIMESTEP;
 
                   //std::cout << vecPolaX << std::endl;
 
@@ -176,16 +186,8 @@ void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
 
                 if(neighbour_is_lumen == 1 && p_neighbour_cell->GetCellData()->GetItem("mustDie")==0){
 
-                  c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
-                  c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
-
-                  double dx = cell_location[0] - neighbour_location[0];
-                  double dy = cell_location[1] - neighbour_location[1];
-
-                  double normalisation = sqrt(dx*dx + dy*dy);
-
-                  vecPolaX = vecPolaX + dx / normalisation * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
-                  vecPolaY = vecPolaY + dy / normalisation * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaX = vecPolaX + dx / normalisationInterCell * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
+                  vecPolaY = vecPolaY + dy / normalisationInterCell * SimulationParameters::IMPACT_POLARISATION_LUMEN_ON_EPI * SimulationParameters::TIMESTEP;
 
                   //std::cout << vecPolaX << std::endl;
 
@@ -196,7 +198,7 @@ void PolarisationModifier<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& 
         }
         pCell->GetCellData()->SetItem("vecPolaX",vecPolaX);
         pCell->GetCellData()->SetItem("vecPolaY",vecPolaY);
-        
+
       }
 
 
