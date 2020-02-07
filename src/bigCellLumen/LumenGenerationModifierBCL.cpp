@@ -115,73 +115,82 @@ void LumenGenerationModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
 
               if ( neighbour_is_epiDir == 1)
               {
+                //on regarde si c'est deux cellules qui viennent de se diviser
                 if(pCell->GetCellData()->GetItem("cellIndex")==p_neighbour_cell->GetCellData()->GetItem("cellIndex"))
                 {
 
-
-                  //on regarde si elle est pointée par le vecteur
-
-                  c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
-                  c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
-
-                  double dx = neighbour_location[0] - cell_location[0];
-                  double dy = neighbour_location[1] - cell_location[1];
-
-                  double deltaXMere = dx - pCell->GetCellData()->GetItem("vecPolaX");
-                  double deltaYMere = dy - pCell->GetCellData()->GetItem("vecPolaY");
-
-                  double deltaXFille = -dx - pCell->GetCellData()->GetItem("vecPolaX");
-                  double deltaYFille = -dy - pCell->GetCellData()->GetItem("vecPolaY");
-
-
-                  //regarde si ce vecteur est plus proche de celui polarisé que l'autre (pas de racine, inutile)
-                  double VecMere = deltaXMere * deltaXMere + deltaYMere * deltaYMere;
-                  double VecFille = deltaXFille * deltaXFille + deltaYFille * deltaYFille;
-
-                  if(VecMere < VecFille){
-                    p_neighbour_cell->RemoveCellProperty<CellEpi>();
-                    MAKE_PTR(CellLumen, p_lumen);
-                    p_neighbour_cell->AddCellProperty(p_lumen);
-                    p_neighbour_cell->GetCellData()->SetItem("mustDie", 0);
-                    p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
-                    p_neighbour_cell->GetCellData()->SetItem("vecPolaY", 0);
-                  }
-
-                  else{
-                    pCell->RemoveCellProperty<CellEpi>();
-                    MAKE_PTR(CellLumen, p_lumen);
-                    pCell->AddCellProperty(p_lumen);
-                    pCell->GetCellData()->SetItem("mustDie", 0);
-                    pCell->GetCellData()->SetItem("vecPolaX", 0);
-                    pCell->GetCellData()->SetItem("vecPolaY", 0);
-                  }
-
-                  pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
-
-                  pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
-
-
+                  //on change l'index de la voisine
                   p_neighbour_cell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
-                  p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
+                  //on regarde si c'est une division pour créer un lumen
+                  if(pCell->GetCellData()->GetItem("hadALumenDivision") == 1)
+                  {
 
 
+                    //on retire le tag de la division
+                    pCell->GetCellData()->SetItem("hadALumenDivision",0);
+                    p_neighbour_cell->GetCellData()->SetItem("hadALumenDivision",0);
 
+
+                    //on regarde si elle est pointée par le vecteur
+
+                    c_vector<double, DIM> neighbour_location = p_cell_population->GetLocationOfCellCentre(p_neighbour_cell);
+                    c_vector<double, DIM> cell_location = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
+
+                    double dx = neighbour_location[0] - cell_location[0];
+                    double dy = neighbour_location[1] - cell_location[1];
+
+                    double deltaXMere = dx - pCell->GetCellData()->GetItem("vecPolaX");
+                    double deltaYMere = dy - pCell->GetCellData()->GetItem("vecPolaY");
+
+                    double deltaXFille = -dx - pCell->GetCellData()->GetItem("vecPolaX");
+                    double deltaYFille = -dy - pCell->GetCellData()->GetItem("vecPolaY");
+
+
+                    //regarde si ce vecteur est plus proche de celui polarisé que l'autre (pas de racine, inutile)
+                    double VecMere = deltaXMere * deltaXMere + deltaYMere * deltaYMere;
+                    double VecFille = deltaXFille * deltaXFille + deltaYFille * deltaYFille;
+
+                    if(VecMere < VecFille){
+                      p_neighbour_cell->RemoveCellProperty<CellEpi>();
+                      MAKE_PTR(CellLumen, p_lumen);
+                      p_neighbour_cell->AddCellProperty(p_lumen);
+                      p_neighbour_cell->GetCellData()->SetItem("mustDie", 0);
+                      p_neighbour_cell->GetCellData()->SetItem("vecPolaX", 0);
+                      p_neighbour_cell->GetCellData()->SetItem("vecPolaY", 0);
+                    }
+
+                    else{
+                      pCell->RemoveCellProperty<CellEpi>();
+                      MAKE_PTR(CellLumen, p_lumen);
+                      pCell->AddCellProperty(p_lumen);
+                      pCell->GetCellData()->SetItem("mustDie", 0);
+                      pCell->GetCellData()->SetItem("vecPolaX", 0);
+                      pCell->GetCellData()->SetItem("vecPolaY", 0);
+                    }
+
+                    pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
+
+                    pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
+
+                    p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
 
                 }
 
               }
 
-
-              //CellLumen
-              bool neighbour_is_lumen = p_neighbour_cell->template HasCellProperty<CellLumen>();
-              if(neighbour_is_lumen){
-                pCell->GetCellData()->SetItem("lumenNearby",SimulationParameters::BCL_NBR_CELL_BETWEEN_TWO_LUMEN);
-              }
-
-
-
             }
+
+
+            //CellLumen
+            bool neighbour_is_lumen = p_neighbour_cell->template HasCellProperty<CellLumen>();
+            if(neighbour_is_lumen){
+              pCell->GetCellData()->SetItem("lumenNearby",SimulationParameters::BCL_NBR_CELL_BETWEEN_TWO_LUMEN);
+            }
+
+
+
+          }
 
 
       }

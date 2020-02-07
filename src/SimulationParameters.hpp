@@ -7,7 +7,7 @@ public:
   //
   static constexpr double TIMESTEP = 0.01;
   static constexpr double SAMPLING_TIMESTEP = 10;
-  static constexpr double TIME_OF_SIMULATION = 20;
+  static constexpr double TIME_OF_SIMULATION = 48;
 
   //Commun aux simulations
 
@@ -25,6 +25,9 @@ public:
   static constexpr double BCL_LUMEN_SIZE_FACTOR = 0.125;
   static constexpr double BCL_NBR_CELL_BETWEEN_TWO_LUMEN = 3;
   static constexpr double BCL_AGE_TO_LUMEN_MATURITY = 15;
+
+  static constexpr double AGE_DIV_LUMEN_MIN = 1;
+
 
   //SCL
 

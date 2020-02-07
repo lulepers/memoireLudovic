@@ -54,7 +54,7 @@
 
 #include <complex>
 
-#include "CycleBCL.hpp"
+#include "CycleBCLGenerational.hpp"
 
 #include "CellEpi.hpp"
 #include "CellEndo.hpp"
@@ -100,7 +100,7 @@ public:
       MAKE_PTR(TransitCellProliferativeType, p_transit_type);
       //MyCycle* cycle = new MyCycle();
       //CellsGenerator<cycle->CreateCellCycleModel(), 2> cells_generator;
-      CellsGenerator<CycleBCL, 2> cells_generator;
+      CellsGenerator<CycleBCLGenerational, 2> cells_generator;
       cells_generator.GenerateBasicRandom(cells, p_mesh->GetNumElements(), p_transit_type);
 
       VertexBasedCellPopulation<2> cell_population(*p_mesh, cells);
@@ -159,11 +159,12 @@ public:
 
         cell_iter->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
         cell_iter->GetCellData()->SetItem("timeFromLastLumenGeneration",0);
+        cell_iter->GetCellData()->SetItem("hadALumenDivision",0);
         cell_iter->GetCellData()->SetItem("lumenNearby",1);
         cell_iter->GetCellData()->SetItem("vecPolaX",0);
         cell_iter->GetCellData()->SetItem("vecPolaY",0);
 
-        if(counter == 2){
+        if(counter < 6){
           cell_iter->AddCellProperty(p_endo);
         }
         else{
