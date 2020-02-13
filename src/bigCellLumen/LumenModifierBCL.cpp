@@ -68,7 +68,7 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
     //double num_cells = 0 ;
     // Iterate over cell population
     //VertexBasedCellPopulation<DIM>* p_cell_population = dynamic_cast<VertexBasedCellPopulation<DIM>*>(&rCellPopulation) ;
-    double targetSize = 0;
+
 
     for (typename AbstractCellPopulation<DIM, DIM>::Iterator cell_iter = rCellPopulation.Begin();
          cell_iter != rCellPopulation.End();
@@ -79,7 +79,7 @@ void LumenModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCel
 
       if (pCell->HasCellProperty<CellLumen>())
       {
-
+        double targetSize = 0;
 
 
         //on cherche la cellule fille

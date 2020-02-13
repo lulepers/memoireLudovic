@@ -130,7 +130,8 @@ void LumenGenerationModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
                     //on retire le tag de la division
                     pCell->GetCellData()->SetItem("hadALumenDivision",0);
                     p_neighbour_cell->GetCellData()->SetItem("hadALumenDivision",0);
-
+                    pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
+                    p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
 
                     //on regarde si elle est pointée par le vecteur
 
@@ -169,11 +170,9 @@ void LumenGenerationModifierBCL<DIM>::UpdateCellData(AbstractCellPopulation<DIM,
                       pCell->GetCellData()->SetItem("vecPolaY", 0);
                     }
 
-                    pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
+                    //pCell->GetCellData()->SetItem("cellIndex",SimulationParameters::getNextIndex());
 
-                    pCell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
 
-                    p_neighbour_cell->GetCellData()->SetItem("timeFromLastLumenGeneration", 0);
 
                 }
 
